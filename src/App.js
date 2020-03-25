@@ -1,25 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Login from "./Components/auth/Login";
+import NuevaCuenta from "./Components/auth/NuevaCuenta";
+import Proyectos from "./Components/proyects/Proyectos";
+
+import ProyectoState from "./Context/proyectos/proyectoState.js";
+import TareaState from "./Context/tareas/tareaState.js";
+import AlertaState from "./Context/alertas/alertaState";
+import AuthState from "./Context/autenticacion/authState";
+import tokenAuth from "./config/tokenAuth";
+import RutaPrivada from "./Components/rutas/RutaPrivada";
+
+//revisar si tenemos un token
+const token = localStorage.getItem("token");
+if (token) {
+  tokenAuth(token);
+}
 
 function App() {
+  console.log(process.env.REACT_APP_BACKEND_URL);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ProyectoState>
+      <TareaState>
+        <AlertaState>
+          <AuthState>
+            <Router>
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route path="/nueva-cuenta" component={NuevaCuenta} />
+                <RutaPrivada path="/proyectos" component={Proyectos} />
+              </Switch>
+            </Router>
+          </AuthState>
+        </AlertaState>
+      </TareaState>
+    </ProyectoState>
   );
 }
 
